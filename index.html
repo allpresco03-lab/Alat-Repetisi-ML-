@@ -32,7 +32,7 @@
         <h3>2. Rekam Gerakan</h3>
         <input type="text" id="labelInput" placeholder="Ketik label (misal: Repetisi_Benar)" value="Repetisi_Benar">
         <br>
-        <button id="recordBtn" class="btn btn-red" disabled>Mulai Rekam (2 Detik)</button>
+        <button id="recordBtn" class="btn btn-red" disabled>Mulai Rekam (4 Detik)</button>
 
         <div class="counter" id="dataCounter">Total Rekaman: 0 data</div>
 
@@ -45,7 +45,7 @@
         let port;
         let isRecording = false;
         let dataset = []; // Array besar untuk menyimpan semua data
-        let currentRecording = []; // Buffer sementara untuk 1 gerakan (2 detik)
+        let currentRecording = []; // Buffer sementara untuk 1 gerakan (4 detik)
         let recordTimeout;
 
         const connectBtn = document.getElementById('connectBtn');
@@ -103,7 +103,7 @@
             }
         }
 
-        // FUNGSI 3: LOGIKA PEREKAMAN (SLIDING WINDOW 2 DETIK)
+        // FUNGSI 3: LOGIKA PEREKAMAN (SLIDING WINDOW 4 DETIK)
         recordBtn.addEventListener('click', () => {
             const labelName = labelInput.value.trim();
             if(!labelName) { alert("Tulis label gerakan dulu!"); return; }
@@ -115,7 +115,7 @@
             statusText.style.color = "red";
             recordBtn.disabled = true;
 
-            // Timer: Hentikan rekaman tepat setelah 2 detik (2000 milidetik)
+            // Timer: Hentikan rekaman tepat setelah 4 detik (4000 milidetik)
             setTimeout(() => {
                 isRecording = false;
                 recordBtn.disabled = false;
@@ -130,7 +130,7 @@
                 statusText.style.color = "green";
                 dataCounter.innerText = `Total Rekaman: ${dataset.length} data`;
 
-            }, 4000); 
+            }, 4000); // <-- INI YANG DIUBAH DARI 2000 MENJADI 4000
         });
 
         // FUNGSI 4: DOWNLOAD DATASET SEBAGAI JSON
