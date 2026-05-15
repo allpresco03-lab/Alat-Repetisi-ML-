@@ -149,9 +149,9 @@
         let port;
         let isRecording = false;
         let isAutoRecording = false;
-        let isWaitingConfirmation = false; // Flag baru: sedang menunggu konfirmasi user
+        let isWaitingConfirmation = false;
         let dataset = []; 
-        let tempRecordingBuffer = []; // Buffer sementara untuk gerakan 4 detik
+        let tempRecordingBuffer = []; 
         let datasetStats = { ok: 0, fail: 0, rest: 0 };
         const BAUD_RATE = 115200;
 
@@ -205,11 +205,15 @@
             } catch (error) { console.error(error); }
         });
 
+        // --- FUNGSI BACA SERIAL YANG SUDAH DIGABUNGKAN (ANTI-LAG) ---
         async function readSerialData() {
             const textDecoder = new TextDecoderStream();
             const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
             const reader = textDecoder.readable.getReader();
             let dataBuffer = '';
+            
+            // TIMER ANTI-LAG: Batasi render grafik maksimal 30 FPS
+            let lastChartUpdate = Date.now(); 
 
             while (true) {
                 const { value, done } = await reader.read();
@@ -217,30 +221,59 @@
                 
                 dataBuffer += value;
                 const lines = dataBuffer.split('\n');
-                dataBuffer = lines.pop();
+                dataBuffer = lines.pop(); // Simpan sisa string potongan data
 
+                let hasValidData = false;
+                let lastValidLine = "";
+
+                // LOOP: Hanya memasukkan angka ke dalam memori (TIDAK MENGGAMBAR GRAFIK DI SINI)
                 lines.forEach(line => {
                     const cleanLine = line.trim();
                     if(!cleanLine) return;
-                    rawLog.innerText = cleanLine; rawLog.scrollTop = rawLog.scrollHeight;
-
+                    
                     const dataArray = cleanLine.split(',');
                     if (dataArray.length >= 3) {
                         const accX = parseInt(dataArray[0]), accY = parseInt(dataArray[1]), accZ = parseInt(dataArray[2]);
 
-                        // JIKA SEDANG REKAM, TAMPUNG DI BUFFER SEMENTARA
+                        // --- FIX GARIS KETARIK: Filter Data Rusak ---
+                        // Jika data terpotong dan menghasilkan NaN (Not a Number), buang datanya!
+                        if (isNaN(accX) || isNaN(accY) || isNaN(accZ)) return; 
+
+                        lastValidLine = cleanLine;
+
+                        // Jika sedang rekam, masukkan ke buffer 4 detik
                         if (isRecording) {
                             tempRecordingBuffer.push([accX, accY, accZ, parseInt(dataArray[3])||0, parseInt(dataArray[4])||0, parseInt(dataArray[5])||0]);
                         }
 
                         liveChart.data.labels.push(''); 
-                        liveChart.data.datasets[0].data.push(accX); liveChart.data.datasets[1].data.push(accY); liveChart.data.datasets[2].data.push(accZ);
-                        if(liveChart.data.labels.length > 150) {
-                            liveChart.data.labels.shift(); liveChart.data.datasets.forEach(d => d.data.shift());
+                        liveChart.data.datasets[0].data.push(accX); 
+                        liveChart.data.datasets[1].data.push(accY); 
+                        liveChart.data.datasets[2].data.push(accZ);
+                        
+                        // Kurangi panjang buntut grafik dari 150 jadi 100 agar lebih ringan
+                        if(liveChart.data.labels.length > 100) {
+                            liveChart.data.labels.shift(); 
+                            liveChart.data.datasets.forEach(d => d.data.shift());
                         }
-                        liveChart.update('none');
+                        hasValidData = true;
                     }
                 });
+
+                // --- FIX LAG: Update UI dan Grafik DI LUAR LOOP ---
+                if (hasValidData) {
+                    // Update teks log hanya dengan baris terakhir saja (menghemat memori)
+                    if (lastValidLine) {
+                        rawLog.innerText = lastValidLine; 
+                    }
+                    
+                    // Render grafik hanya jika sudah berlalu 30 milidetik (sekitar 30 FPS)
+                    const now = Date.now();
+                    if (now - lastChartUpdate > 30) { 
+                        liveChart.update('none'); // Update tanpa animasi
+                        lastChartUpdate = now;
+                    }
+                }
             }
         }
 
@@ -250,7 +283,7 @@
             
             const labelName = labelInput.value;
             isRecording = true;
-            tempRecordingBuffer = []; // Reset buffersementara
+            tempRecordingBuffer = []; // Reset buffer sementara
             
             // UI Status: Merekam
             connStatus.innerText = `🔴 MEREKAM [${labelName}] ... HARAP GERAKKAN!`;
