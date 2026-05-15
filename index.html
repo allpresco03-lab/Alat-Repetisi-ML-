@@ -3,61 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard AI Alat Gerak</title>
+    <title>Perekam Dataset ML - Sports Engineering</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f9; padding: 50px; }
-        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); display: inline-block; }
-        h1 { color: #333; }
-        #status { font-size: 24px; font-weight: bold; color: #007bff; margin: 20px 0; }
-        button { background: #28a745; color: white; border: none; padding: 15px 30px; font-size: 16px; border-radius: 5px; cursor: pointer; }
-        button:hover { background: #218838; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background-color: #e9ecef; padding: 20px; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
+        .btn { border: none; padding: 12px 20px; font-size: 16px; border-radius: 6px; cursor: pointer; margin: 5px; font-weight: bold; color: white;}
+        .btn-blue { background: #007bff; } .btn-blue:hover { background: #0056b3; }
+        .btn-red { background: #dc3545; } .btn-red:hover { background: #c82333; }
+        .btn-green { background: #28a745; } .btn-green:hover { background: #218838; }
+        input[type="text"] { padding: 10px; font-size: 16px; width: 60%; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        #statusBox { margin: 20px 0; padding: 15px; border-radius: 8px; background-color: #f8f9fa; border: 1px solid #ddd; }
+        .counter { font-size: 18px; font-weight: bold; color: #333; margin-top: 15px;}
     </style>
 </head>
 <body>
 
     <div class="card">
-        <h1>Monitor Gerakan AI</h1>
-        <p>Klik tombol di bawah dan pilih port COM ESP32 Anda</p>
-        <button id="connectBtn">Hubungkan ke Alat</button>
-        <div id="status">Status: Belum Terhubung</div>
+        <h2>Sistem Akuisisi Data MPU6050</h2>
+        
+        <button id="connectBtn" class="btn btn-blue">1. Hubungkan ESP32</button>
+        
+        <div id="statusBox">
+            <h3 id="statusText" style="color: #666; margin:0;">Status: Menunggu Koneksi...</h3>
+        </div>
+
+        <hr style="border: 1px solid #eee; margin: 20px 0;">
+
+        <h3>2. Rekam Gerakan</h3>
+        <input type="text" id="labelInput" placeholder="Ketik label (misal: Repetisi_Benar)" value="Repetisi_Benar">
+        <br>
+        <button id="recordBtn" class="btn btn-red" disabled>Mulai Rekam (2 Detik)</button>
+
+        <div class="counter" id="dataCounter">Total Rekaman: 0 data</div>
+
+        <hr style="border: 1px solid #eee; margin: 20px 0;">
+
+        <button id="downloadBtn" class="btn btn-green">3. Download Dataset (.json)</button>
     </div>
 
     <script>
         let port;
-        const connectBtn = document.getElementById('connectBtn');
-        const statusDiv = document.getElementById('status');
+        let isRecording = false;
+        let dataset = []; // Array besar untuk menyimpan semua data
+        let currentRecording = []; // Buffer sementara untuk 1 gerakan (2 detik)
+        let recordTimeout;
 
+        const connectBtn = document.getElementById('connectBtn');
+        const recordBtn = document.getElementById('recordBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const statusText = document.getElementById('statusText');
+        const labelInput = document.getElementById('labelInput');
+        const dataCounter = document.getElementById('dataCounter');
+
+        // FUNGSI 1: KONEKSI KE SERIAL PORT
         connectBtn.addEventListener('click', async () => {
             try {
-                // Meminta izin browser untuk membaca port USB
                 port = await navigator.serial.requestPort();
-                await port.open({ baudRate: 115200 }); // Samakan dengan baud rate Arduino
+                await port.open({ baudRate: 115200 });
+                
+                statusText.innerText = "Alat Terhubung! Siap merekam.";
+                statusText.style.color = "green";
+                recordBtn.disabled = false; // Aktifkan tombol rekam
 
-                statusDiv.innerText = "Alat Terhubung! Menunggu Data...";
-                statusDiv.style.color = "green";
-
-                const textDecoder = new TextDecoderStream();
-                const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
-                const reader = textDecoder.readable.getReader();
-
-                // Membaca data yang masuk terus menerus
-                while (true) {
-                    const { value, done } = await reader.read();
-                    if (done) {
-                        reader.releaseLock();
-                        break;
-                    }
-                    if (value) {
-                        // Tampilkan teks dari ESP32 ke layar Web
-                        // Kamu bisa memodifikasi logika ini untuk menghitung repetisi nanti
-                        statusDiv.innerText = "Terdeteksi: " + value; 
-                    }
-                }
+                readSerialData(); // Panggil fungsi pembaca
             } catch (error) {
-                console.error("Gagal terhubung:", error);
-                statusDiv.innerText = "Gagal terhubung ke port USB";
-                statusDiv.style.color = "red";
+                statusText.innerText = "Koneksi Gagal/Dibatalkan.";
+                statusText.style.color = "red";
             }
+        });
+
+        // FUNGSI 2: MEMBACA DATA DARI ESP32
+        async function readSerialData() {
+            const textDecoder = new TextDecoderStream();
+            const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+            const reader = textDecoder.readable.getReader();
+            let dataBuffer = '';
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+                
+                dataBuffer += value;
+                const lines = dataBuffer.split('\n');
+                dataBuffer = lines.pop(); // Simpan sisa string yang belum utuh
+
+                lines.forEach(line => {
+                    const dataObj = line.trim().split(',');
+                    // Pastikan datanya utuh 6 sumbu (AccX, AccY, AccZ, GyX, GyY, GyZ)
+                    if (dataObj.length === 6) {
+                        // JIKA SEDANG MODE REKAM, SIMPAN DATANYA
+                        if (isRecording) {
+                            currentRecording.push([
+                                parseInt(dataObj[0]), parseInt(dataObj[1]), parseInt(dataObj[2]),
+                                parseInt(dataObj[3]), parseInt(dataObj[4]), parseInt(dataObj[5])
+                            ]);
+                        }
+                    }
+                });
+            }
+        }
+
+        // FUNGSI 3: LOGIKA PEREKAMAN (SLIDING WINDOW 2 DETIK)
+        recordBtn.addEventListener('click', () => {
+            const labelName = labelInput.value.trim();
+            if(!labelName) { alert("Tulis label gerakan dulu!"); return; }
+
+            isRecording = true;
+            currentRecording = []; // Kosongkan buffer
+            
+            statusText.innerText = `Sedang Merekam [${labelName}] ... GERAKAN SEKARANG!`;
+            statusText.style.color = "red";
+            recordBtn.disabled = true;
+
+            // Timer: Hentikan rekaman tepat setelah 2 detik (2000 milidetik)
+            setTimeout(() => {
+                isRecording = false;
+                recordBtn.disabled = false;
+                
+                // Simpan hasil rekaman ke dataset utama
+                dataset.push({
+                    label: labelName,
+                    data: currentRecording
+                });
+
+                statusText.innerText = "Rekaman Selesai! Alat Terhubung.";
+                statusText.style.color = "green";
+                dataCounter.innerText = `Total Rekaman: ${dataset.length} data`;
+
+            }, 2000); 
+        });
+
+        // FUNGSI 4: DOWNLOAD DATASET SEBAGAI JSON
+        downloadBtn.addEventListener('click', () => {
+            if(dataset.length === 0) { alert("Belum ada data yang direkam!"); return; }
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataset));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "dataset_olahraga.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
         });
     </script>
 </body>
