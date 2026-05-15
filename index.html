@@ -17,60 +17,59 @@
         /* Layout Utama Menggunakan Grid */
         .grid-container {
             display: grid;
-            grid-template-columns: 280px 1fr;
+            grid-template-columns: 320px 1fr;
             grid-template-rows: calc(100vh - 70px);
-            gap: 15px;
-            padding: 15px;
+            gap: 20px;
+            padding: 20px;
         }
         
         /* Kolom Kiri - Control Panel */
         .col-left { display: flex; flex-direction: column; gap: 15px; overflow-y: auto;}
         
-        /* Kolom Kanan - Graphs */
+        /* Kolom Kanan - Placeholder */
         .col-right { display: flex; flex-direction: column; gap: 15px; }
         
-        .panel { background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px; border: 1px solid #eee;}
-        .panel-header { border-bottom: 2px solid #f4f4f4; margin-bottom: 10px; padding-bottom: 5px; font-weight: bold; color: var(--secondary); font-size: 1em; display: flex; justify-content: space-between; align-items: center;}
+        .panel { background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 20px; border: 1px solid #eee;}
+        .panel-header { border-bottom: 2px solid #f4f4f4; margin-bottom: 15px; padding-bottom: 8px; font-weight: bold; color: var(--secondary); font-size: 1.1em; display: flex; justify-content: space-between; align-items: center;}
         
         /* UI Elements */
-        .btn { border: none; padding: 10px 15px; font-size: 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; width: 100%; margin-bottom: 8px; transition: 0.1s;}
+        .btn { border: none; padding: 12px 15px; font-size: 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; width: 100%; margin-bottom: 10px; transition: 0.1s;}
         .btn:disabled { opacity: 0.4; cursor: not-allowed; }
         .btn-blue { background-color: var(--accent); } .btn-blue:hover { background-color: #2980b9; }
         .btn-green { background-color: var(--success); } .btn-green:hover { background-color: #219150; }
         .btn-red { background-color: var(--danger); } .btn-red:hover { background-color: #a93226; }
         .btn-warning { background-color: var(--warning); color: #333;} .btn-warning:hover { background-color: #d68910; }
         
-        select { padding: 10px; font-size: 14px; width: 100%; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;}
-        #rawLog { background-color: #2c3e50; color: #2ecc71; font-family: 'Courier New', Courier, monospace; height: 90px; overflow-y: scroll; padding: 8px; border-radius: 4px; font-size: 12px; text-align: left; }
+        select { padding: 12px; font-size: 14px; width: 100%; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;}
+        #rawLog { background-color: #2c3e50; color: #2ecc71; font-family: 'Courier New', Courier, monospace; height: 60px; overflow-y: scroll; padding: 10px; border-radius: 4px; font-size: 13px; text-align: left; display: flex; align-items: center;}
         
-        .counter-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; }
-        .counter-card { padding: 8px; border-radius: 6px; color: white; text-align: center; font-size: 0.85em; }
-        .count-num { font-size: 1.6em; font-weight: bold; }
-        
-        .chart-container { position: relative; height: 100%; width: 100%; min-height: 150px; }
+        .counter-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+        .counter-card { padding: 10px; border-radius: 6px; color: white; text-align: center; font-size: 0.9em; }
+        .count-num { font-size: 1.8em; font-weight: bold; margin-top: 5px;}
         
         /* Auto-Record Toggle */
-        .auto-box { background: #e8f8f5; padding: 8px; border-radius: 4px; margin-bottom: 10px; border: 1px solid #1abc9c; font-size: 0.9em;}
+        .auto-box { background: #e8f8f5; padding: 12px; border-radius: 4px; margin-bottom: 15px; border: 1px solid #1abc9c; font-size: 0.95em;}
         
         /* --- PANEL KONFIRMASI / INSPEKSI (MODAL OVERLAY) --- */
         #inspectOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.6); display: none; z-index: 1000;
+            background-color: rgba(0,0,0,0.7); display: none; z-index: 1000;
             justify-content: center; align-items: center;
         }
         .inspect-content {
-            background-color: white; border-radius: 10px; width: 80%; max-width: 900px;
-            padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            background-color: white; border-radius: 12px; width: 85%; max-width: 1000px;
+            padding: 25px; box-shadow: 0 15px 30px rgba(0,0,0,0.3);
             animation: slideDown 0.2s ease-out;
         }
         @keyframes slideDown { from {transform: translateY(-50px); opacity: 0;} to {transform: translateY(0); opacity: 1;} }
+        .chart-container { position: relative; height: 350px; width: 100%; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1 style="margin:0; font-size: 1.2em;">SportsAI Biomekanik v1.7 - Data Confirmation Mode</h1>
-        <div id="connStatus" style="font-size: 0.8em; padding: 4px 8px; border-radius: 15px; background-color: rgba(255,255,255,0.2);">🔴 Disconnected</div>
+        <h1 style="margin:0; font-size: 1.2em;">SportsAI Biomekanik v1.8 - Performance Mode</h1>
+        <div id="connStatus" style="font-size: 0.85em; padding: 5px 10px; border-radius: 15px; background-color: rgba(255,255,255,0.2);">🔴 Disconnected</div>
     </div>
 
     <div class="grid-container">
@@ -79,7 +78,7 @@
             <div class="panel">
                 <div class="panel-header">1. Koneksi ESP32</div>
                 <button id="connectBtn" class="btn btn-blue">Hubungkan Serial</button>
-                <div id="rawLog">Data stream monitor...</div>
+                <div id="rawLog">Monitor Serial (Teks Terakhir)...</div>
             </div>
 
             <div class="panel" id="acquisitionPanel">
@@ -98,7 +97,7 @@
                 <button id="recordBtn" class="btn btn-red" disabled>🎬 Mulai Rekam (4s)</button>
                 <button id="stopAutoBtn" class="btn btn-warning" style="display:none;">Hentikan Auto-Loop</button>
                 
-                <hr style="border: 1px solid #eee; margin: 10px 0;">
+                <hr style="border: 1px solid #eee; margin: 15px 0;">
                 <div class="counter-grid">
                     <div class="counter-card" style="background-color: var(--success);">
                         <div>OK</div><div class="count-num" id="countOk">0</div>
@@ -114,38 +113,40 @@
 
             <div class="panel">
                 <div class="panel-header">3. Ekspor Dataset</div>
-                <button id="downloadBtn" class="btn btn-green">Download (.json)</button>
+                <button id="downloadBtn" class="btn btn-green">Download Dataset (.json)</button>
             </div>
         </div>
 
         <div class="col-right">
-            <div class="panel" style="flex: 1;">
-                <div class="panel-header">Monitor Sensor Real-Time (Akselerometer)</div>
-                <div class="chart-container"><canvas id="liveChart"></canvas></div>
+            <div class="panel" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: #f8f9fa; border: 3px dashed #bdc3c7;">
+                <div style="text-align: center; color: #7f8c8d;">
+                    <h1 style="font-size: 3em; margin-bottom: 10px;">⚡</h1>
+                    <h2 style="margin-bottom: 10px; color: #2c3e50;">Performance Mode Aktif</h2>
+                    <p style="font-size: 1.1em; max-width: 500px; line-height: 1.5;">Grafik Real-Time dinonaktifkan agar aliran data serial dari ESP32 masuk 100% tanpa lag.<br><br><b>Grafik evaluasi gerakan hanya akan muncul di layar konfirmasi setelah Anda selesai merekam data selama 4 detik.</b></p>
+                </div>
             </div>
         </div>
     </div>
 
     <div id="inspectOverlay">
         <div class="inspect-content">
-            <div class="panel-header" style="border-bottom: 2px solid #e67e22; color:#e67e22; font-size:1.2em;">
+            <div class="panel-header" style="border-bottom: 2px solid #e67e22; color:#e67e22; font-size:1.4em;">
                 <span>🕵️ Konfirmasi Rekaman Gerakan [4 Detik]</span>
-                <span id="inspectLabel" style="background:#e67e22; color:white; padding: 2px 8px; border-radius: 4px; font-size: 0.8em;">Benar</span>
+                <span id="inspectLabel" style="background:#e67e22; color:white; padding: 4px 12px; border-radius: 6px; font-size: 0.8em;">Benar</span>
             </div>
             
-            <p style="font-size: 0.9em; color:#555; margin-bottom: 5px;">Evaluasi grafik gelombang di bawah. Apakah gerakannya utuh, sempurna, dan bebas noise?</p>
+            <p style="font-size: 1em; color:#555; margin-bottom: 10px;">Evaluasi grafik gelombang di bawah. Apakah gerakannya utuh, sempurna, dan bebas noise?</p>
             
-            <div class="chart-container" style="height: 250px; background: #fafafa; border: 1px solid #ddd; border-radius: 4px;"><canvas id="previewChart"></canvas></div>
+            <div class="chart-container" style="background: #fafafa; border: 1px solid #ddd; border-radius: 6px; padding: 10px;"><canvas id="previewChart"></canvas></div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
-                <button id="rejectBtn" class="btn btn-red" style="font-size: 1.1em; margin:0;">🗑️ Jelek, Buang & Ulangi</button>
-                <button id="acceptBtn" class="btn btn-green" style="font-size: 1.1em; margin:0;">✅ Bagus, Simpan Data</button>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                <button id="rejectBtn" class="btn btn-red" style="font-size: 1.2em; padding: 15px; margin:0;">🗑️ Jelek, Buang & Ulangi</button>
+                <button id="acceptBtn" class="btn btn-green" style="font-size: 1.2em; padding: 15px; margin:0;">✅ Bagus, Simpan Data</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- GLOBAL STATE ---
         let port;
         let isRecording = false;
         let isAutoRecording = false;
@@ -155,7 +156,6 @@
         let datasetStats = { ok: 0, fail: 0, rest: 0 };
         const BAUD_RATE = 115200;
 
-        // UI Elements
         const connStatus = document.getElementById('connStatus');
         const rawLog = document.getElementById('rawLog');
         const connectBtn = document.getElementById('connectBtn');
@@ -166,7 +166,6 @@
         const acquisitionPanel = document.getElementById('acquisitionPanel');
         const downloadBtn = document.getElementById('downloadBtn');
 
-        // Overlay Elements
         const inspectOverlay = document.getElementById('inspectOverlay');
         const inspectLabelText = document.getElementById('inspectLabel');
         const acceptBtn = document.getElementById('acceptBtn');
@@ -178,42 +177,25 @@
             'Diam_Rest': document.getElementById('countRest')
         };
 
-        // --- CHARTS CONFIG ---
-        const liveChart = new Chart(document.getElementById('liveChart').getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: [], 
-                datasets: [
-                    { label: 'Acc X', borderColor: '#e74c3c', data: [], fill: false, tension: 0.1, pointRadius: 0, borderWidth: 2 },
-                    { label: 'Acc Y', borderColor: '#2ecc71', data: [], fill: false, tension: 0.1, pointRadius: 0, borderWidth: 2 },
-                    { label: 'Acc Z', borderColor: '#3498db', data: [], fill: false, tension: 0.1, pointRadius: 0, borderWidth: 2 }
-                ]
-            },
-            options: { animation: false, maintainAspectRatio: false, scales: { x: { display: false }, y: { min: -22000, max: 22000 } }, plugins:{legend:{labels:{boxWidth:10, font:{size:11}}}} }
-        });
-
+        // Hanya menyisakan chart Preview. Live chart dihapus total.
         let previewChart = new Chart(document.getElementById('previewChart').getContext('2d'), { type: 'line', options: { maintainAspectRatio: false } });
 
-        // --- SERIAL CONNECTION ---
         connectBtn.addEventListener('click', async () => {
             try {
                 port = await navigator.serial.requestPort();
                 await port.open({ baudRate: BAUD_RATE });
-                connStatus.innerText = "🟢 Connected - Hardware OK"; connStatus.style.backgroundColor = "rgba(46, 204, 113, 0.4)";
+                connStatus.innerText = "🟢 Connected - Zero Lag Mode"; connStatus.style.backgroundColor = "rgba(46, 204, 113, 0.4)";
                 connectBtn.disabled = true; recordBtn.disabled = false;
                 readSerialData(); 
             } catch (error) { console.error(error); }
         });
 
-        // --- FUNGSI BACA SERIAL YANG SUDAH DIGABUNGKAN (ANTI-LAG) ---
+        // FUNGSI BACA SERIAL (Sangat Ringan, Hanya Menampung Data Tanpa Gambar Grafik)
         async function readSerialData() {
             const textDecoder = new TextDecoderStream();
             const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
             const reader = textDecoder.readable.getReader();
             let dataBuffer = '';
-            
-            // TIMER ANTI-LAG: Batasi render grafik maksimal 30 FPS
-            let lastChartUpdate = Date.now(); 
 
             while (true) {
                 const { value, done } = await reader.read();
@@ -221,12 +203,10 @@
                 
                 dataBuffer += value;
                 const lines = dataBuffer.split('\n');
-                dataBuffer = lines.pop(); // Simpan sisa string potongan data
+                dataBuffer = lines.pop(); 
 
-                let hasValidData = false;
                 let lastValidLine = "";
 
-                // LOOP: Hanya memasukkan angka ke dalam memori (TIDAK MENGGAMBAR GRAFIK DI SINI)
                 lines.forEach(line => {
                     const cleanLine = line.trim();
                     if(!cleanLine) return;
@@ -235,89 +215,52 @@
                     if (dataArray.length >= 3) {
                         const accX = parseInt(dataArray[0]), accY = parseInt(dataArray[1]), accZ = parseInt(dataArray[2]);
 
-                        // --- FIX GARIS KETARIK: Filter Data Rusak ---
-                        // Jika data terpotong dan menghasilkan NaN (Not a Number), buang datanya!
                         if (isNaN(accX) || isNaN(accY) || isNaN(accZ)) return; 
 
                         lastValidLine = cleanLine;
 
-                        // Jika sedang rekam, masukkan ke buffer 4 detik
                         if (isRecording) {
                             tempRecordingBuffer.push([accX, accY, accZ, parseInt(dataArray[3])||0, parseInt(dataArray[4])||0, parseInt(dataArray[5])||0]);
                         }
-
-                        liveChart.data.labels.push(''); 
-                        liveChart.data.datasets[0].data.push(accX); 
-                        liveChart.data.datasets[1].data.push(accY); 
-                        liveChart.data.datasets[2].data.push(accZ);
-                        
-                        // Kurangi panjang buntut grafik dari 150 jadi 100 agar lebih ringan
-                        if(liveChart.data.labels.length > 100) {
-                            liveChart.data.labels.shift(); 
-                            liveChart.data.datasets.forEach(d => d.data.shift());
-                        }
-                        hasValidData = true;
                     }
                 });
 
-                // --- FIX LAG: Update UI dan Grafik DI LUAR LOOP ---
-                if (hasValidData) {
-                    // Update teks log hanya dengan baris terakhir saja (menghemat memori)
-                    if (lastValidLine) {
-                        rawLog.innerText = lastValidLine; 
-                    }
-                    
-                    // Render grafik hanya jika sudah berlalu 30 milidetik (sekitar 30 FPS)
-                    const now = Date.now();
-                    if (now - lastChartUpdate > 30) { 
-                        liveChart.update('none'); // Update tanpa animasi
-                        lastChartUpdate = now;
-                    }
+                if (lastValidLine) {
+                    rawLog.innerText = "Terekam: " + lastValidLine; 
                 }
             }
         }
 
-        // --- RECORDING LOGIC (4 DETIK) ---
         function executeRecordingCycle() {
-            if(isRecording || isWaitingConfirmation) return; // Cegah double trigger
+            if(isRecording || isWaitingConfirmation) return; 
             
             const labelName = labelInput.value;
             isRecording = true;
-            tempRecordingBuffer = []; // Reset buffer sementara
+            tempRecordingBuffer = []; 
             
-            // UI Status: Merekam
             connStatus.innerText = `🔴 MEREKAM [${labelName}] ... HARAP GERAKKAN!`;
             connStatus.style.backgroundColor = "rgba(231, 76, 60, 0.5)";
             
-            // Disable tombol tombol di panel kiri agar user tidak kacau
             acquisitionPanel.style.opacity = "0.5";
             recordBtn.disabled = true; recordBtn.innerText = "SEDANG MEREKAM (4s)...";
             downloadBtn.disabled = true;
             
-            // Timer: Hentikan rekaman setelah 4 detik
             setTimeout(() => {
                 isRecording = false;
-                
                 connStatus.innerText = `🧐 SELESAI. SILAKAN INSPEKSI DATA...`;
                 connStatus.style.backgroundColor = "rgba(230, 126, 34, 0.5)";
-
-                // Masuk ke tahap inspeksi
                 enterInspectionMode(labelName, tempRecordingBuffer);
-
             }, 4000);
         }
 
         recordBtn.addEventListener('click', executeRecordingCycle);
 
-        // --- INSPECTION & CONFIRMATION LOGIC ---
         function enterInspectionMode(label, dataMovement) {
             isWaitingConfirmation = true;
             
-            // Visualisasikan di Overlay Modal
             inspectOverlay.style.display = 'flex';
             inspectLabelText.innerText = label;
 
-            // Hancurkan & Buat ulang preview chart
             if (previewChart) previewChart.destroy();
             
             const dataPreviewArray = dataMovement.map((_, i) => i);
@@ -326,42 +269,36 @@
                 data: {
                     labels: dataPreviewArray,
                     datasets: [
-                        { label: 'Acc X', borderColor: '#e74c3c', data: dataMovement.map(d => d[0]), fill: false, tension: 0.1, pointRadius: 0, borderWidth: 2 },
-                        { label: 'Acc Y', borderColor: '#2ecc71', data: dataMovement.map(d => d[1]), fill: false, tension: 0.1, pointRadius: 0, borderWidth: 2 },
-                        { label: 'Acc Z', borderColor: '#3498db', data: dataMovement.map(d => d[2]), fill: false, tension: 0.1, pointRadius: 0, borderWidth: 2 }
+                        { label: 'Acc X', borderColor: '#e74c3c', data: dataMovement.map(d => d[0]), fill: false, tension: 0.1, pointRadius: 0, borderWidth: 3 },
+                        { label: 'Acc Y', borderColor: '#2ecc71', data: dataMovement.map(d => d[1]), fill: false, tension: 0.1, pointRadius: 0, borderWidth: 3 },
+                        { label: 'Acc Z', borderColor: '#3498db', data: dataMovement.map(d => d[2]), fill: false, tension: 0.1, pointRadius: 0, borderWidth: 3 }
                     ]
                 },
                 options: { 
                     maintainAspectRatio: false, 
-                    animation: {duration: 200}, // Animasi dikit pas muncul
+                    animation: {duration: 0}, // Matikan animasi agar langsung muncul
                     scales: { x:{display:false}, y:{min:-22000, max:22000} }, 
-                    plugins: {legend: {labels:{boxWidth:10}}}
+                    plugins: {legend: {labels:{boxWidth:15, font:{size:14}}}}
                 }
             });
         }
 
-        // FUNGSI: USER MENERIMA DATA (BAGUS)
         acceptBtn.addEventListener('click', () => {
             const labelName = labelInput.value;
-            
-            // MASUKKAN KE DATASET UTAMA
             dataset.push({ label: labelName, data: tempRecordingBuffer });
             updateCounters();
-            
             exitInspectionMode("✅ Data disimpan!");
         });
 
-        // FUNGSI: USER MENOLAK DATA (JELEK)
         rejectBtn.addEventListener('click', () => {
             exitInspectionMode("🗑️ Data dibuang.");
         });
 
         function exitInspectionMode(statusTextForConn) {
-            inspectOverlay.style.display = 'none'; // Sembunyikan Modal
-            tempRecordingBuffer = []; // Bersihkan buffer sementara
+            inspectOverlay.style.display = 'none'; 
+            tempRecordingBuffer = []; 
             isWaitingConfirmation = false;
             
-            // Kembalikan UI Panel Kiri
             acquisitionPanel.style.opacity = "1";
             recordBtn.innerText = "🎬 Mulai Rekam (4s)";
             downloadBtn.disabled = false;
@@ -371,7 +308,6 @@
             if(isAutoRecording) {
                 connStatus.innerText = `${statusTextForConn} -> ⏳ JEDA 2 DETIK...`;
                 connStatus.style.backgroundColor = "rgba(241, 196, 15, 0.4)";
-                // Jeda sebelum siklus otomatis berikutnya
                 setTimeout(() => {
                     if (isAutoRecording && !isWaitingConfirmation) executeRecordingCycle();
                 }, 2000);
@@ -382,7 +318,6 @@
             }
         }
 
-        // --- AUTO-LOOP CONTROL ---
         autoCheck.addEventListener('change', () => {
             isAutoRecording = autoCheck.checked;
             if(isAutoRecording) {
@@ -390,7 +325,6 @@
                 stopAutoBtn.style.display = 'block';
                 labelInput.disabled = true;
             } else {
-                // Jangan paksa ubah tombol kalau sedang waiting confirmation
                 if(!isWaitingConfirmation) {
                     stopAutoBtn.style.display = 'none';
                     recordBtn.style.display = 'block';
@@ -409,7 +343,6 @@
             connStatus.innerText = "🛑 Auto-Loop dihentikan.";
         });
 
-        // --- DATASET & DOWNLOAD UTILITIES ---
         function updateCounters() {
             datasetStats = { ok: 0, fail: 0, rest: 0 };
             dataset.forEach(item => {
@@ -426,7 +359,7 @@
             if(dataset.length === 0) { alert("Dataset kosong!"); return; }
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataset));
             const dl = document.createElement('a'); dl.setAttribute("href", dataStr);
-            dl.setAttribute("download", `confirmed_dataset_${datasetStats.ok}OK_${datasetStats.fail}FAIL.json`);
+            dl.setAttribute("download", `dataset_${datasetStats.ok}OK_${datasetStats.fail}FAIL_${datasetStats.rest}REST.json`);
             document.body.appendChild(dl); dl.click(); dl.remove();
         });
     </script>
