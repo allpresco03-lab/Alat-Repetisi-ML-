@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard AI Alat Gerak</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f9; padding: 50px; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); display: inline-block; }
+        h1 { color: #333; }
+        #status { font-size: 24px; font-weight: bold; color: #007bff; margin: 20px 0; }
+        button { background: #28a745; color: white; border: none; padding: 15px 30px; font-size: 16px; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #218838; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Monitor Gerakan AI</h1>
+        <p>Klik tombol di bawah dan pilih port COM ESP32 Anda</p>
+        <button id="connectBtn">Hubungkan ke Alat</button>
+        <div id="status">Status: Belum Terhubung</div>
+    </div>
+
+    <script>
+        let port;
+        const connectBtn = document.getElementById('connectBtn');
+        const statusDiv = document.getElementById('status');
+
+        connectBtn.addEventListener('click', async () => {
+            try {
+                // Meminta izin browser untuk membaca port USB
+                port = await navigator.serial.requestPort();
+                await port.open({ baudRate: 115200 }); // Samakan dengan baud rate Arduino
+
+                statusDiv.innerText = "Alat Terhubung! Menunggu Data...";
+                statusDiv.style.color = "green";
+
+                const textDecoder = new TextDecoderStream();
+                const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+                const reader = textDecoder.readable.getReader();
+
+                // Membaca data yang masuk terus menerus
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) {
+                        reader.releaseLock();
+                        break;
+                    }
+                    if (value) {
+                        // Tampilkan teks dari ESP32 ke layar Web
+                        // Kamu bisa memodifikasi logika ini untuk menghitung repetisi nanti
+                        statusDiv.innerText = "Terdeteksi: " + value; 
+                    }
+                }
+            } catch (error) {
+                console.error("Gagal terhubung:", error);
+                statusDiv.innerText = "Gagal terhubung ke port USB";
+                statusDiv.style.color = "red";
+            }
+        });
+    </script>
+</body>
+</html>
