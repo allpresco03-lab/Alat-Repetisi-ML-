@@ -10,57 +10,81 @@
             --primary: #2c3e50; --secondary: #34495e; --accent: #3498db;
             --success: #27ae60; --danger: #c0392b; --warning: #f39c12; --light: #ecf0f1;
         }
-        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; color: #333; overflow-x: hidden;}
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; color: #333; overflow: hidden;}
         
-        .header { background-color: var(--primary); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center;}
-        .main-container { display: flex; flex-wrap: wrap; padding: 20px; gap: 20px; }
-        .panel { background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); padding: 20px; flex: 1; min-width: 300px; }
-        .panel-header { border-bottom: 2px solid #eee; margin-bottom: 15px; padding-bottom: 10px; font-weight: bold; color: var(--secondary); font-size: 1.1em;}
+        .header { background-color: var(--primary); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; height: 50px;}
         
-        .col-left { flex: 0 0 320px; display: flex; flex-direction: column; gap: 20px;}
-        .col-graphs { flex: 2; display: flex; flex-direction: column; gap: 20px; }
+        /* Layout Utama Menggunakan Grid */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            grid-template-rows: calc(100vh - 70px);
+            gap: 15px;
+            padding: 15px;
+        }
         
-        .btn { border: none; padding: 12px 20px; font-size: 15px; border-radius: 6px; cursor: pointer; font-weight: bold; color: white; width: 100%; margin-bottom: 10px; transition: 0.2s;}
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        /* Kolom Kiri - Control Panel */
+        .col-left { display: flex; flex-direction: column; gap: 15px; overflow-y: auto;}
+        
+        /* Kolom Kanan - Graphs */
+        .col-right { display: flex; flex-direction: column; gap: 15px; }
+        
+        .panel { background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px; border: 1px solid #eee;}
+        .panel-header { border-bottom: 2px solid #f4f4f4; margin-bottom: 10px; padding-bottom: 5px; font-weight: bold; color: var(--secondary); font-size: 1em; display: flex; justify-content: space-between; align-items: center;}
+        
+        /* UI Elements */
+        .btn { border: none; padding: 10px 15px; font-size: 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; width: 100%; margin-bottom: 8px; transition: 0.1s;}
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
         .btn-blue { background-color: var(--accent); } .btn-blue:hover { background-color: #2980b9; }
         .btn-green { background-color: var(--success); } .btn-green:hover { background-color: #219150; }
         .btn-red { background-color: var(--danger); } .btn-red:hover { background-color: #a93226; }
         .btn-warning { background-color: var(--warning); color: #333;} .btn-warning:hover { background-color: #d68910; }
         
-        select { padding: 12px; font-size: 15px; width: 100%; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;}
-        #rawLog { background-color: #2c3e50; color: #2ecc71; font-family: 'Courier New', Courier, monospace; height: 120px; overflow-y: scroll; padding: 10px; border-radius: 5px; font-size: 13px; text-align: left; }
+        select { padding: 10px; font-size: 14px; width: 100%; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;}
+        #rawLog { background-color: #2c3e50; color: #2ecc71; font-family: 'Courier New', Courier, monospace; height: 90px; overflow-y: scroll; padding: 8px; border-radius: 4px; font-size: 12px; text-align: left; }
         
-        /* Counter Grid Baru (3 Kolom) */
         .counter-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; }
-        .counter-card { padding: 10px; border-radius: 8px; color: white; text-align: center; font-size: 0.9em; }
-        .count-num { font-size: 1.8em; font-weight: bold; margin-top: 5px;}
+        .counter-card { padding: 8px; border-radius: 6px; color: white; text-align: center; font-size: 0.85em; }
+        .count-num { font-size: 1.6em; font-weight: bold; }
         
-        .chart-container { position: relative; height: 220px; width: 100%; }
+        .chart-container { position: relative; height: 100%; width: 100%; min-height: 150px; }
         
         /* Auto-Record Toggle */
-        .auto-box { background: #e8f8f5; padding: 10px; border-radius: 5px; margin-bottom: 10px; border: 1px solid #1abc9c; font-size: 0.95em;}
+        .auto-box { background: #e8f8f5; padding: 8px; border-radius: 4px; margin-bottom: 10px; border: 1px solid #1abc9c; font-size: 0.9em;}
         
-        @media (max-width: 768px) { .main-container { flex-direction: column; } .col-left { flex: 1 1 100%; } }
+        /* --- PANEL KONFIRMASI / INSPEKSI (MODAL OVERLAY) --- */
+        #inspectOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.6); display: none; z-index: 1000;
+            justify-content: center; align-items: center;
+        }
+        .inspect-content {
+            background-color: white; border-radius: 10px; width: 80%; max-width: 900px;
+            padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: slideDown 0.2s ease-out;
+        }
+        @keyframes slideDown { from {transform: translateY(-50px); opacity: 0;} to {transform: translateY(0); opacity: 1;} }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1 style="margin:0; font-size: 1.4em;">SportsAI Biomekanik v1.6</h1>
-        <div id="connStatus" style="font-size: 0.9em; padding: 5px 10px; border-radius: 20px; background-color: rgba(255,255,255,0.2);">🔴 Disconnected</div>
+        <h1 style="margin:0; font-size: 1.2em;">SportsAI Biomekanik v1.7 - Data Confirmation Mode</h1>
+        <div id="connStatus" style="font-size: 0.8em; padding: 4px 8px; border-radius: 15px; background-color: rgba(255,255,255,0.2);">🔴 Disconnected</div>
     </div>
 
-    <div class="main-container">
+    <div class="grid-container">
         
         <div class="col-left">
             <div class="panel">
-                <div class="panel-header">1. Koneksi Hardware</div>
-                <button id="connectBtn" class="btn btn-blue">Hubungkan ESP32</button>
-                <div id="rawLog">Menunggu data Serial...</div>
+                <div class="panel-header">1. Koneksi ESP32</div>
+                <button id="connectBtn" class="btn btn-blue">Hubungkan Serial</button>
+                <div id="rawLog">Data stream monitor...</div>
             </div>
 
-            <div class="panel">
-                <div class="panel-header">2. Akuisisi Data Training</div>
+            <div class="panel" id="acquisitionPanel">
+                <div class="panel-header">2. Rekam Data Training</div>
+                <label style="font-size:0.85em; color:#666;">Kelas Gerakan:</label>
                 <select id="labelInput">
                     <option value="Repetisi_Benar">Repetisi_Benar (OK)</option>
                     <option value="Repetisi_Salah">Repetisi_Salah (FAIL)</option>
@@ -68,14 +92,13 @@
                 </select>
                 
                 <div class="auto-box">
-                    <input type="checkbox" id="autoCheck"> <label for="autoCheck"><b>Auto-Loop Mode</b> (Rekam 4s, Istirahat 2s berulang)</label>
+                    <input type="checkbox" id="autoCheck"> <label for="autoCheck"><b>Auto-Loop Mode</b> (Rekam 4s, jeda 2s)</label>
                 </div>
                 
-                <button id="recordBtn" class="btn btn-red" disabled>Mulai Rekam</button>
+                <button id="recordBtn" class="btn btn-red" disabled>🎬 Mulai Rekam (4s)</button>
                 <button id="stopAutoBtn" class="btn btn-warning" style="display:none;">Hentikan Auto-Loop</button>
                 
-                <hr style="border: 1px solid #eee; margin: 15px 0;">
-                <div class="panel-header" style="font-size: 1em;">Distribusi Dataset</div>
+                <hr style="border: 1px solid #eee; margin: 10px 0;">
                 <div class="counter-grid">
                     <div class="counter-card" style="background-color: var(--success);">
                         <div>OK</div><div class="count-num" id="countOk">0</div>
@@ -90,37 +113,45 @@
             </div>
 
             <div class="panel">
-                <div class="panel-header">3. Ekspor Data</div>
+                <div class="panel-header">3. Ekspor Dataset</div>
                 <button id="downloadBtn" class="btn btn-green">Download (.json)</button>
             </div>
         </div>
 
-        <div class="col-graphs">
-            
-            <div class="panel">
-                <div class="panel-header">Monitor Real-Time (Sumbu Akselerometer)</div>
+        <div class="col-right">
+            <div class="panel" style="flex: 1;">
+                <div class="panel-header">Monitor Sensor Real-Time (Akselerometer)</div>
                 <div class="chart-container"><canvas id="liveChart"></canvas></div>
             </div>
-            
-            <div class="panel" id="previewPanel" style="display:none; background-color: #fdfefe; border: 1px solid #bdc3c7;">
-                <div class="panel-header" id="previewTitle" style="color:#d35400;">Preview Rekaman Terakhir</div>
-                <div class="chart-container" style="height: 180px;"><canvas id="previewChart"></canvas></div>
-                <div style="text-align: right; margin-top: 15px;">
-                    <span style="font-size: 0.85em; color: #666; margin-right: 15px;">Grafik jelek/gerakan salah timing?</span>
-                    <button id="undoBtn" class="btn btn-warning" style="width: auto; padding: 8px 15px;">🗑️ Hapus Rekaman Ini</button>
-                </div>
-            </div>
+        </div>
+    </div>
 
+    <div id="inspectOverlay">
+        <div class="inspect-content">
+            <div class="panel-header" style="border-bottom: 2px solid #e67e22; color:#e67e22; font-size:1.2em;">
+                <span>🕵️ Konfirmasi Rekaman Gerakan [4 Detik]</span>
+                <span id="inspectLabel" style="background:#e67e22; color:white; padding: 2px 8px; border-radius: 4px; font-size: 0.8em;">Benar</span>
+            </div>
+            
+            <p style="font-size: 0.9em; color:#555; margin-bottom: 5px;">Evaluasi grafik gelombang di bawah. Apakah gerakannya utuh, sempurna, dan bebas noise?</p>
+            
+            <div class="chart-container" style="height: 250px; background: #fafafa; border: 1px solid #ddd; border-radius: 4px;"><canvas id="previewChart"></canvas></div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                <button id="rejectBtn" class="btn btn-red" style="font-size: 1.1em; margin:0;">🗑️ Jelek, Buang & Ulangi</button>
+                <button id="acceptBtn" class="btn btn-green" style="font-size: 1.1em; margin:0;">✅ Bagus, Simpan Data</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // --- STATE VARIABLES ---
+        // --- GLOBAL STATE ---
         let port;
         let isRecording = false;
         let isAutoRecording = false;
+        let isWaitingConfirmation = false; // Flag baru: sedang menunggu konfirmasi user
         let dataset = []; 
-        let currentRecording = []; 
+        let tempRecordingBuffer = []; // Buffer sementara untuk gerakan 4 detik
         let datasetStats = { ok: 0, fail: 0, rest: 0 };
         const BAUD_RATE = 115200;
 
@@ -130,31 +161,35 @@
         const connectBtn = document.getElementById('connectBtn');
         const recordBtn = document.getElementById('recordBtn');
         const stopAutoBtn = document.getElementById('stopAutoBtn');
-        const undoBtn = document.getElementById('undoBtn');
         const labelInput = document.getElementById('labelInput');
         const autoCheck = document.getElementById('autoCheck');
-        const previewPanel = document.getElementById('previewPanel');
-        const previewTitle = document.getElementById('previewTitle');
+        const acquisitionPanel = document.getElementById('acquisitionPanel');
+        const downloadBtn = document.getElementById('downloadBtn');
 
-        // Counters
+        // Overlay Elements
+        const inspectOverlay = document.getElementById('inspectOverlay');
+        const inspectLabelText = document.getElementById('inspectLabel');
+        const acceptBtn = document.getElementById('acceptBtn');
+        const rejectBtn = document.getElementById('rejectBtn');
+
         const countEls = {
             'Repetisi_Benar': document.getElementById('countOk'),
             'Repetisi_Salah': document.getElementById('countFail'),
             'Diam_Rest': document.getElementById('countRest')
         };
 
-        // --- CHART CONFIG ---
+        // --- CHARTS CONFIG ---
         const liveChart = new Chart(document.getElementById('liveChart').getContext('2d'), {
             type: 'line',
             data: {
                 labels: [], 
                 datasets: [
-                    { label: 'Acc X', borderColor: '#e74c3c', data: [], fill: false, tension: 0.1, pointRadius: 0 },
-                    { label: 'Acc Y', borderColor: '#2ecc71', data: [], fill: false, tension: 0.1, pointRadius: 0 },
-                    { label: 'Acc Z', borderColor: '#3498db', data: [], fill: false, tension: 0.1, pointRadius: 0 }
+                    { label: 'Acc X', borderColor: '#e74c3c', data: [], fill: false, tension: 0.1, pointRadius: 0, borderWidth: 2 },
+                    { label: 'Acc Y', borderColor: '#2ecc71', data: [], fill: false, tension: 0.1, pointRadius: 0, borderWidth: 2 },
+                    { label: 'Acc Z', borderColor: '#3498db', data: [], fill: false, tension: 0.1, pointRadius: 0, borderWidth: 2 }
                 ]
             },
-            options: { animation: false, maintainAspectRatio: false, scales: { x: { display: false }, y: { min: -20000, max: 20000 } } }
+            options: { animation: false, maintainAspectRatio: false, scales: { x: { display: false }, y: { min: -22000, max: 22000 } }, plugins:{legend:{labels:{boxWidth:10, font:{size:11}}}} }
         });
 
         let previewChart = new Chart(document.getElementById('previewChart').getContext('2d'), { type: 'line', options: { maintainAspectRatio: false } });
@@ -164,7 +199,7 @@
             try {
                 port = await navigator.serial.requestPort();
                 await port.open({ baudRate: BAUD_RATE });
-                connStatus.innerText = "🟢 Connected"; connStatus.style.backgroundColor = "rgba(46, 204, 113, 0.3)";
+                connStatus.innerText = "🟢 Connected - Hardware OK"; connStatus.style.backgroundColor = "rgba(46, 204, 113, 0.4)";
                 connectBtn.disabled = true; recordBtn.disabled = false;
                 readSerialData(); 
             } catch (error) { console.error(error); }
@@ -193,13 +228,14 @@
                     if (dataArray.length >= 3) {
                         const accX = parseInt(dataArray[0]), accY = parseInt(dataArray[1]), accZ = parseInt(dataArray[2]);
 
+                        // JIKA SEDANG REKAM, TAMPUNG DI BUFFER SEMENTARA
                         if (isRecording) {
-                            currentRecording.push([accX, accY, accZ, parseInt(dataArray[3])||0, parseInt(dataArray[4])||0, parseInt(dataArray[5])||0]);
+                            tempRecordingBuffer.push([accX, accY, accZ, parseInt(dataArray[3])||0, parseInt(dataArray[4])||0, parseInt(dataArray[5])||0]);
                         }
 
                         liveChart.data.labels.push(''); 
                         liveChart.data.datasets[0].data.push(accX); liveChart.data.datasets[1].data.push(accY); liveChart.data.datasets[2].data.push(accZ);
-                        if(liveChart.data.labels.length > 100) {
+                        if(liveChart.data.labels.length > 150) {
                             liveChart.data.labels.shift(); liveChart.data.datasets.forEach(d => d.data.shift());
                         }
                         liveChart.update('none');
@@ -208,78 +244,139 @@
             }
         }
 
-        // --- RECORDING LOGIC ---
+        // --- RECORDING LOGIC (4 DETIK) ---
         function executeRecordingCycle() {
-            if(!isAutoRecording && isRecording) return; // Prevent double trigger
+            if(isRecording || isWaitingConfirmation) return; // Cegah double trigger
             
             const labelName = labelInput.value;
             isRecording = true;
-            currentRecording = []; 
+            tempRecordingBuffer = []; // Reset buffersementara
             
-            connStatus.innerText = `🔴 MEREKAM: ${labelName} (4s)`;
-            connStatus.style.backgroundColor = "rgba(231, 76, 60, 0.3)";
-            recordBtn.disabled = true;
-            recordBtn.innerText = "SEDANG MEREKAM...";
+            // UI Status: Merekam
+            connStatus.innerText = `🔴 MEREKAM [${labelName}] ... HARAP GERAKKAN!`;
+            connStatus.style.backgroundColor = "rgba(231, 76, 60, 0.5)";
             
-            // Rekam selama 4 detik
+            // Disable tombol tombol di panel kiri agar user tidak kacau
+            acquisitionPanel.style.opacity = "0.5";
+            recordBtn.disabled = true; recordBtn.innerText = "SEDANG MEREKAM (4s)...";
+            downloadBtn.disabled = true;
+            
+            // Timer: Hentikan rekaman setelah 4 detik
             setTimeout(() => {
                 isRecording = false;
                 
-                // Simpan & Update UI Counter
-                dataset.push({ label: labelName, data: currentRecording });
-                updateCounters();
-                visualizePreview(labelName, currentRecording);
+                connStatus.innerText = `🧐 SELESAI. SILAKAN INSPEKSI DATA...`;
+                connStatus.style.backgroundColor = "rgba(230, 126, 34, 0.5)";
 
-                if (isAutoRecording) {
-                    connStatus.innerText = `⏳ JEDA 2 DETIK... BERSEDIA!`;
-                    connStatus.style.backgroundColor = "rgba(241, 196, 15, 0.3)";
-                    
-                    // Jeda 2 detik sebelum siklus berikutnya
-                    setTimeout(() => {
-                        if (isAutoRecording) executeRecordingCycle();
-                    }, 2000);
-                } else {
-                    connStatus.innerText = "🟢 Siap Merekam";
-                    connStatus.style.backgroundColor = "rgba(46, 204, 113, 0.3)";
-                    recordBtn.disabled = false;
-                    recordBtn.innerText = "Mulai Rekam";
-                }
+                // Masuk ke tahap inspeksi
+                enterInspectionMode(labelName, tempRecordingBuffer);
+
             }, 4000);
         }
 
-        recordBtn.addEventListener('click', () => {
-            if(autoCheck.checked) {
-                isAutoRecording = true;
+        recordBtn.addEventListener('click', executeRecordingCycle);
+
+        // --- INSPECTION & CONFIRMATION LOGIC ---
+        function enterInspectionMode(label, dataMovement) {
+            isWaitingConfirmation = true;
+            
+            // Visualisasikan di Overlay Modal
+            inspectOverlay.style.display = 'flex';
+            inspectLabelText.innerText = label;
+
+            // Hancurkan & Buat ulang preview chart
+            if (previewChart) previewChart.destroy();
+            
+            const dataPreviewArray = dataMovement.map((_, i) => i);
+            previewChart = new Chart(document.getElementById('previewChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: dataPreviewArray,
+                    datasets: [
+                        { label: 'Acc X', borderColor: '#e74c3c', data: dataMovement.map(d => d[0]), fill: false, tension: 0.1, pointRadius: 0, borderWidth: 2 },
+                        { label: 'Acc Y', borderColor: '#2ecc71', data: dataMovement.map(d => d[1]), fill: false, tension: 0.1, pointRadius: 0, borderWidth: 2 },
+                        { label: 'Acc Z', borderColor: '#3498db', data: dataMovement.map(d => d[2]), fill: false, tension: 0.1, pointRadius: 0, borderWidth: 2 }
+                    ]
+                },
+                options: { 
+                    maintainAspectRatio: false, 
+                    animation: {duration: 200}, // Animasi dikit pas muncul
+                    scales: { x:{display:false}, y:{min:-22000, max:22000} }, 
+                    plugins: {legend: {labels:{boxWidth:10}}}
+                }
+            });
+        }
+
+        // FUNGSI: USER MENERIMA DATA (BAGUS)
+        acceptBtn.addEventListener('click', () => {
+            const labelName = labelInput.value;
+            
+            // MASUKKAN KE DATASET UTAMA
+            dataset.push({ label: labelName, data: tempRecordingBuffer });
+            updateCounters();
+            
+            exitInspectionMode("✅ Data disimpan!");
+        });
+
+        // FUNGSI: USER MENOLAK DATA (JELEK)
+        rejectBtn.addEventListener('click', () => {
+            exitInspectionMode("🗑️ Data dibuang.");
+        });
+
+        function exitInspectionMode(statusTextForConn) {
+            inspectOverlay.style.display = 'none'; // Sembunyikan Modal
+            tempRecordingBuffer = []; // Bersihkan buffer sementara
+            isWaitingConfirmation = false;
+            
+            // Kembalikan UI Panel Kiri
+            acquisitionPanel.style.opacity = "1";
+            recordBtn.innerText = "🎬 Mulai Rekam (4s)";
+            downloadBtn.disabled = false;
+
+            connStatus.innerText = statusTextForConn;
+            
+            if(isAutoRecording) {
+                connStatus.innerText = `${statusTextForConn} -> ⏳ JEDA 2 DETIK...`;
+                connStatus.style.backgroundColor = "rgba(241, 196, 15, 0.4)";
+                // Jeda sebelum siklus otomatis berikutnya
+                setTimeout(() => {
+                    if (isAutoRecording && !isWaitingConfirmation) executeRecordingCycle();
+                }, 2000);
+            } else {
+                connStatus.innerText = `${statusTextForConn} -> 🟢 Siap merekam lagi.`;
+                connStatus.style.backgroundColor = "rgba(46, 204, 113, 0.4)";
+                recordBtn.disabled = false;
+            }
+        }
+
+        // --- AUTO-LOOP CONTROL ---
+        autoCheck.addEventListener('change', () => {
+            isAutoRecording = autoCheck.checked;
+            if(isAutoRecording) {
                 recordBtn.style.display = 'none';
                 stopAutoBtn.style.display = 'block';
                 labelInput.disabled = true;
-                autoCheck.disabled = true;
+            } else {
+                // Jangan paksa ubah tombol kalau sedang waiting confirmation
+                if(!isWaitingConfirmation) {
+                    stopAutoBtn.style.display = 'none';
+                    recordBtn.style.display = 'block';
+                    labelInput.disabled = false;
+                }
             }
-            executeRecordingCycle();
         });
 
         stopAutoBtn.addEventListener('click', () => {
             isAutoRecording = false;
             stopAutoBtn.style.display = 'none';
             recordBtn.style.display = 'block';
-            recordBtn.disabled = false;
-            recordBtn.innerText = "Mulai Rekam";
+            if(!isRecording && !isWaitingConfirmation) recordBtn.disabled = false;
             labelInput.disabled = false;
-            autoCheck.disabled = false;
-            connStatus.innerText = "🟢 Auto-Loop Dihentikan. Siap.";
+            autoCheck.checked = false;
+            connStatus.innerText = "🛑 Auto-Loop dihentikan.";
         });
 
-        // --- UNDO FEATURE (HAPUS REKAMAN TERAKHIR) ---
-        undoBtn.addEventListener('click', () => {
-            if (dataset.length === 0) return;
-            
-            const deletedItem = dataset.pop(); // Cabut data terakhir dari array
-            updateCounters(); // Update angka counter
-            
-            previewPanel.style.display = 'none'; // Sembunyikan panel preview
-            alert(`Sip! 1 Data [${deletedItem.label}] berhasil dihapus dari antrean.`);
-        });
-
+        // --- DATASET & DOWNLOAD UTILITIES ---
         function updateCounters() {
             datasetStats = { ok: 0, fail: 0, rest: 0 };
             dataset.forEach(item => {
@@ -292,32 +389,11 @@
             countEls['Diam_Rest'].innerText = datasetStats.rest;
         }
 
-        // --- VISUALIZE PREVIEW ---
-        function visualizePreview(label, dataMovement) {
-            previewPanel.style.display = 'block';
-            previewTitle.innerText = `Preview Terakhir: ${label}`;
-            if (previewChart) previewChart.destroy();
-            
-            previewChart = new Chart(document.getElementById('previewChart').getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: dataMovement.map((_, i) => i),
-                    datasets: [
-                        { label: 'Acc X', borderColor: '#e74c3c', data: dataMovement.map(d => d[0]), fill: false, tension: 0.1, pointRadius: 0 },
-                        { label: 'Acc Y', borderColor: '#2ecc71', data: dataMovement.map(d => d[1]), fill: false, tension: 0.1, pointRadius: 0 },
-                        { label: 'Acc Z', borderColor: '#3498db', data: dataMovement.map(d => d[2]), fill: false, tension: 0.1, pointRadius: 0 }
-                    ]
-                },
-                options: { maintainAspectRatio: false, scales: { x:{display:false}, y:{min:-20000, max:20000} }, animation: false }
-            });
-        }
-
-        // --- DOWNLOAD JSON ---
         document.getElementById('downloadBtn').addEventListener('click', () => {
             if(dataset.length === 0) { alert("Dataset kosong!"); return; }
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataset));
             const dl = document.createElement('a'); dl.setAttribute("href", dataStr);
-            dl.setAttribute("download", `dataset_${datasetStats.ok}OK_${datasetStats.fail}FAIL_${datasetStats.rest}REST.json`);
+            dl.setAttribute("download", `confirmed_dataset_${datasetStats.ok}OK_${datasetStats.fail}FAIL.json`);
             document.body.appendChild(dl); dl.click(); dl.remove();
         });
     </script>
